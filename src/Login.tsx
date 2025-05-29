@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from './firebaseConfig';
+import { auth } from './firebase/firebaseConfig.ts';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -109,6 +109,8 @@ const inputStyle = {
   border: '1px solid #ccc',
   borderRadius: '8px',
   fontSize: '1rem',
+  backgroundColor: '#cccccc',
+  color: '#1b1b1b',
 };
 
 const buttonStyle = {

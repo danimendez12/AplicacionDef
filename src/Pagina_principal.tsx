@@ -1,7 +1,11 @@
-import  { useState, type CSSProperties } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
-import { auth } from './firebaseConfig';
+import { auth } from './firebase/firebaseConfig.ts';
+import { documentosMock } from './data/Documentos';
+import {mainContent,cardStyle,verMasButtonStyle,searchBarContainer,searchInput,contentContainer,sidebar,logoutButtonStyle,selectStyle} from './styles/styles'
+import {type CSSProperties, useState} from "react";
+
 export default function PaginaPrincipal() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
@@ -16,16 +20,16 @@ export default function PaginaPrincipal() {
   }
 };
 
-  const data = [
-    { id: 1, name: 'Producto A', category: 'frutas' },
-    { id: 2, name: 'Producto B', category: 'verduras' },
-    { id: 3, name: 'Producto C', category: 'frutas' },
-    { id: 4, name: 'Producto D', category: 'bebidas' },
-  ];
+ const documentos = documentosMock
 
-  const filteredData = data.filter(item => {
-    const matchesCategory = filterCategory === 'all' || item.category === filterCategory;
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+const handleVerMas = (id: number) => {
+  navigate(`/pagina_documento/${id}`);
+};
+
+
+  const filteredData = documentos.filter(item => {
+    const matchesCategory = filterCategory === 'all' || item.autor === filterCategory;
+    const matchesSearch = item.titulo.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -44,56 +48,48 @@ export default function PaginaPrincipal() {
       <div style={contentContainer}>
         <aside style={sidebar}>
           <h3>Filtros</h3>
-          <select
-              value={filterCategory}
-              onChange={e => setFilterCategory(e.target.value)}
-              style={selectStyle}
-          >
-
-            <option value="all">Todas</option>
-            <option value="frutas">Frutas</option>
-            <option value="verduras">Verduras</option>
-            <option value="bebidas">Bebidas</option>
-          </select>
+          <h3>Filtrar por autor</h3>
+            <select
+                value={filterCategory}
+                onChange={e => setFilterCategory(e.target.value)}
+                style={selectStyle}
+            >
+              <option value="all">Todos</option>
+              <option value="Dra. Ana Pérez">Dra. Ana Pérez</option>
+              <option value="Dr. Carlos Gómez">Dr. Carlos Gómez</option>
+            </select>
           <button onClick={handleLogout} style={logoutButtonStyle}>
             Cerrar sesión
           </button>
         </aside>
 
         <main style={mainContent}>
-          <table style={tableStyle}>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Categoría</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.length > 0 ? (
-                filteredData.map(item => (
-                  <tr key={item.id}>
-                    <td>{item.id}</td>
-                    <td>{item.name}</td>
-                    <td>{item.category}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={3} style={{ textAlign: 'center' }}>
-                    No se encontraron resultados
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          {filteredData.length > 0 ? (
+              filteredData.map(doc => (
+                <div key={doc.id} style={cardStyle}>
+                  <h3 style={{ fontStyle: 'italic' }}>{doc.titulo}</h3>
+                  <p><strong>{doc.autor}</strong></p>
+                  <p><em><strong>{doc.fecha}</strong></em></p>
+                  <p><em><strong>{doc.resumen}</strong></em></p>
+                  <button
+                    style={verMasButtonStyle}
+                    onClick={() => handleVerMas(doc.id)}
+                  >
+                    Ver más
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p style={{ textAlign: 'center' }}>No se encontraron documentos</p>
+            )}
+
         </main>
       </div>
     </div>
   );
 }
 
-const container: CSSProperties = {
+export const container: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   height: '100vh',
@@ -101,72 +97,5 @@ const container: CSSProperties = {
   padding: '1rem',
   backgroundColor: '#f0f2f5',
   boxSizing: 'border-box',
-};
-
-const searchBarContainer: CSSProperties = {
-  marginBottom: '1rem',
-  flexShrink: 0,
-};
-
-const searchInput: CSSProperties = {
-  width: '100%',
-  padding: '0.75rem',
-  fontSize: '1rem',
-  borderRadius: '8px',
-  border: '1px solid #ccc',
-  boxSizing: 'border-box',
-};
-
-const contentContainer: CSSProperties = {
-  display: 'flex',
-  flex: 1,
-  gap: '1rem',
-  minHeight: 0,
-};
-
-const sidebar: CSSProperties = {
-  width: '200px',
-  backgroundColor: '#fff',
-  padding: '1rem',
-  borderRadius: '12px',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-  height: '100%',
-  boxSizing: 'border-box',
-  overflowY: 'auto',
-};
-
-const selectStyle: CSSProperties = {
-  width: '100%',
-  padding: '0.5rem',
-  fontSize: '1rem',
-  borderRadius: '6px',
-  border: '1px solid #ccc',
-  boxSizing: 'border-box',
-};
-
-const mainContent: CSSProperties = {
-  flex: 1,
-  backgroundColor: '#fff',
-  padding: '1rem',
-  borderRadius: '12px',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-  overflowY: 'auto',
-  minHeight: 0,
-};
-
-const tableStyle: CSSProperties = {
-  width: '100%',
-  borderCollapse: 'collapse',
-};
-
-const logoutButtonStyle: CSSProperties = {
-  marginTop: '1rem',
-  width: '100%',
-  padding: '0.5rem',
-  fontSize: '1rem',
-  borderRadius: '8px',
-  border: 'none',
-  backgroundColor: '#dc3545',
-  color: '#fff',
-  cursor: 'pointer',
+  overflow: 'hidden', // ¡importante!
 };

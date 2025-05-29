@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { auth } from './firebaseConfig';  // Importa aquí auth configurado
+import { auth } from './firebase/firebaseConfig.ts';  // Importa aquí auth configurado
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default function RegisterPage() {
@@ -49,6 +49,8 @@ const inputStyle = {
   border: '1px solid #ccc',
   borderRadius: '8px',
   fontSize: '1rem',
+  backgroundColor: '#cccccc',
+  color: '#1b1b1b',
 };
 
 const buttonStyle = {

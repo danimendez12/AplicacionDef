@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import Login from './Login';
 import RegisterPage from './Register';
 import Pagina_principal from './Pagina_principal'
+import PaginaDocumento from './pagina_documento';
 
 function Home() {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ function Home() {
   );
 }
 
+
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -36,6 +39,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterPage />} />
           <Route path="/pagina_principal" element={<Pagina_principal />} />
+        <Route path="/pagina_documento/:id" element={<PaginaDocumento />} />
       </Routes>
     </BrowserRouter>
   );
@@ -47,7 +51,9 @@ const buttonStyle = {
   borderRadius: '8px',
   border: 'none',
   cursor: 'pointer',
-  backgroundColor: '#007bff',
+  backgroundColor: '#458339',
   color: 'white',
 };
+
+
 
