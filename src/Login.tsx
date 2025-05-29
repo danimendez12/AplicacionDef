@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from './firebaseConfig';
 
-export default function Login() {
-
+export default function LoginPage() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -20,25 +22,24 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
 
-    // Aquí iría tu lógica para login
-    alert('Intentando iniciar sesión con: ' + JSON.stringify(formData));
-    navigate('/pagina_principal');
+    try {
+      await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      alert('Inicio de sesión exitoso');
+      navigate('/pagina_principal');
+    } catch (err: any) {
+      console.error('Error al iniciar sesión:', err);
+      setError('Correo o contraseña inválidos');
+    }
   };
 
   return (
     <div style={containerStyle}>
-      <form onSubmit={handleSubmit} style={formStyle}>
-        <h2
-            style={{
-              textAlign: 'center',
-              marginBottom: '1.5rem',
-              color: '#333',
-            }}
-        >
-          Login
-        </h2>
-        <input
+      <div style={formContainerStyle}>
+        <h2 style={titleStyle}>Iniciar Sesión</h2>
+        <form onSubmit={handleSubmit}>
+          <input
             type="email"
             name="email"
             placeholder="Correo"
@@ -46,8 +47,8 @@ export default function Login() {
             onChange={handleChange}
             required
             style={inputStyle}
-        />
-        <input
+          />
+          <input
             type="password"
             name="password"
             placeholder="Contraseña"
@@ -55,21 +56,28 @@ export default function Login() {
             onChange={handleChange}
             required
             style={inputStyle}
-        />
-        <button type="submit" style={buttonStyle}>Entrar</button>
-
+          />
+          <button type="submit" style={buttonStyle}>
+            Iniciar Sesión
+          </button>
+        </form>
+        {error && (
+          <p style={{ color: 'red', marginTop: '1rem', textAlign: 'center' }}>
+            {error}
+          </p>
+        )}
         <p style={linkTextStyle}>
           ¿No tienes cuenta?{' '}
           <Link to="/register" style={linkStyle}>
             Regístrate aquí
           </Link>
         </p>
-      </form>
+      </div>
     </div>
   );
 }
 
-// Estilos reutilizables
+// Estilos
 const containerStyle = {
   display: 'flex',
   justifyContent: 'center',
@@ -79,14 +87,19 @@ const containerStyle = {
   backgroundColor: '#f0f2f5',
 };
 
-const formStyle = {
+const formContainerStyle = {
   backgroundColor: '#ffffff',
   padding: '2rem',
   borderRadius: '12px',
   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
   width: '100%',
   maxWidth: '400px',
+};
+
+const titleStyle = {
   textAlign: 'center' as const,
+  marginBottom: '1.5rem',
+  color: '#333',
 };
 
 const inputStyle = {
@@ -120,4 +133,3 @@ const linkStyle = {
   textDecoration: 'underline',
   cursor: 'pointer',
 };
-

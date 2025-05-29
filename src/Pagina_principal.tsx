@@ -1,8 +1,20 @@
 import  { useState, type CSSProperties } from 'react';
-
+import { useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebaseConfig';
 export default function PaginaPrincipal() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+  try {
+    await signOut(auth);
+    alert('Sesión cerrada correctamente');
+    navigate('/login'); // redirige al login
+  } catch (error) {
+    console.error('Error al cerrar sesión:', error);
+  }
+};
 
   const data = [
     { id: 1, name: 'Producto A', category: 'frutas' },
@@ -33,21 +45,25 @@ export default function PaginaPrincipal() {
         <aside style={sidebar}>
           <h3>Filtros</h3>
           <select
-            value={filterCategory}
-            onChange={e => setFilterCategory(e.target.value)}
-            style={selectStyle}
+              value={filterCategory}
+              onChange={e => setFilterCategory(e.target.value)}
+              style={selectStyle}
           >
+
             <option value="all">Todas</option>
             <option value="frutas">Frutas</option>
             <option value="verduras">Verduras</option>
             <option value="bebidas">Bebidas</option>
           </select>
+          <button onClick={handleLogout} style={logoutButtonStyle}>
+            Cerrar sesión
+          </button>
         </aside>
 
         <main style={mainContent}>
           <table style={tableStyle}>
             <thead>
-              <tr>
+            <tr>
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>Categoría</th>
@@ -141,4 +157,16 @@ const mainContent: CSSProperties = {
 const tableStyle: CSSProperties = {
   width: '100%',
   borderCollapse: 'collapse',
+};
+
+const logoutButtonStyle: CSSProperties = {
+  marginTop: '1rem',
+  width: '100%',
+  padding: '0.5rem',
+  fontSize: '1rem',
+  borderRadius: '8px',
+  border: 'none',
+  backgroundColor: '#dc3545',
+  color: '#fff',
+  cursor: 'pointer',
 };
