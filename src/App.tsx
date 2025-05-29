@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -6,14 +6,16 @@ export default function RegisterPage() {
     password: '',
   });
 
-  const handleChange = (e) => {
+  // Tipo explícito para evento de cambio en input
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async (e) => {
+  // Tipo explícito para evento de submit de formulario
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
