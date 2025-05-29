@@ -1,43 +1,10 @@
-import { useState } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import Login from './Login';
+import RegisterPage from './Register';
+import Pagina_principal from './Pagina_principal'
 
-export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-
-  // Tipo explícito para evento de cambio en input
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  // Tipo explícito para evento de submit de formulario
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    try {
-      const response = await fetch('http://localhost:5000/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(data.message);
-      } else {
-        alert(data.error || 'Error desconocido del servidor');
-        console.error('Error del backend:', data);
-      }
-    } catch (error) {
-      console.error('Error al registrar:', error);
-      alert('Ocurrió un error al registrar');
-    }
-  };
+function Home() {
+  const navigate = useNavigate();
 
   return (
     <div
@@ -48,72 +15,39 @@ export default function RegisterPage() {
         height: '100vh',
         width: '100vw',
         backgroundColor: '#f0f2f5',
+        gap: '1rem',
       }}
     >
-      <div
-        style={{
-          backgroundColor: '#ffffff',
-          padding: '2rem',
-          borderRadius: '12px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-          width: '100%',
-          maxWidth: '400px',
-        }}
-      >
-        <h2
-          style={{
-            textAlign: 'center',
-            marginBottom: '1.5rem',
-            color: '#333',
-          }}
-        >
-          Registro
-        </h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Correo"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            style={inputStyle}
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Contraseña"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            style={inputStyle}
-          />
-          <button type="submit" style={buttonStyle}>
-            Registrarse
-          </button>
-        </form>
-      </div>
+      <button style={buttonStyle} onClick={() => navigate('/login')}>
+        Login
+      </button>
+      <button style={buttonStyle} onClick={() => navigate('/register')}>
+        Register
+      </button>
     </div>
   );
 }
 
-// Estilos reutilizables
-const inputStyle = {
-  width: '100%',
-  padding: '0.75rem',
-  marginBottom: '1rem',
-  border: '1px solid #ccc',
-  borderRadius: '8px',
-  fontSize: '1rem',
-};
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<RegisterPage />} />
+          <Route path="/pagina_principal" element={<Pagina_principal />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
 
 const buttonStyle = {
-  width: '100%',
-  padding: '0.75rem',
-  backgroundColor: '#007bff',
-  color: '#fff',
-  border: 'none',
+  padding: '1rem 2rem',
+  fontSize: '1.25rem',
   borderRadius: '8px',
-  fontSize: '1rem',
+  border: 'none',
   cursor: 'pointer',
+  backgroundColor: '#007bff',
+  color: 'white',
 };
+
