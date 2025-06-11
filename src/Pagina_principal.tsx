@@ -1,101 +1,91 @@
-
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from './firebase/firebaseConfig.ts';
-import { documentosMock } from './data/Documentos';
-import {mainContent,cardStyle,verMasButtonStyle,searchBarContainer,searchInput,contentContainer,sidebar,logoutButtonStyle,selectStyle} from './styles/styles'
-import {type CSSProperties, useState} from "react";
 
 export default function PaginaPrincipal() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState('all');
   const navigate = useNavigate();
+
   const handleLogout = async () => {
-  try {
-    await signOut(auth);
-    alert('Sesión cerrada correctamente');
-    navigate('/login'); // redirige al login
-  } catch (error) {
-    console.error('Error al cerrar sesión:', error);
-  }
-};
-
- const documentos = documentosMock
-
-const handleVerMas = (id: number) => {
-  navigate(`/pagina_documento/${id}`);
-};
-
-
-  const filteredData = documentos.filter(item => {
-    const matchesCategory = filterCategory === 'all' || item.autor === filterCategory;
-    const matchesSearch = item.titulo.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+    try {
+      await signOut(auth);
+      alert('Sesión cerrada correctamente');
+      navigate('/login');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
 
   return (
     <div style={container}>
-      <div style={searchBarContainer}>
-        <input
-          type="text"
-          placeholder="Buscar..."
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          style={searchInput}
-        />
-      </div>
-
       <div style={contentContainer}>
         <aside style={sidebar}>
-          <h3>Filtros</h3>
-          <h3>Filtrar por autor</h3>
-            <select
-                value={filterCategory}
-                onChange={e => setFilterCategory(e.target.value)}
-                style={selectStyle}
-            >
-              <option value="all">Todos</option>
-              <option value="Dra. Ana Pérez">Dra. Ana Pérez</option>
-              <option value="Dr. Carlos Gómez">Dr. Carlos Gómez</option>
-            </select>
+          <h3>Sidebar</h3>
+          <h3>Sidebar</h3>
           <button onClick={handleLogout} style={logoutButtonStyle}>
             Cerrar sesión
           </button>
         </aside>
 
-        <main style={mainContent}>
-          {filteredData.length > 0 ? (
-              filteredData.map(doc => (
-                <div key={doc.id} style={cardStyle}>
-                  <h3 style={{ fontStyle: 'italic' }}>{doc.titulo}</h3>
-                  <p><strong>{doc.autor}</strong></p>
-                  <p><em><strong>{doc.fecha}</strong></em></p>
-                  <p><em><strong>{doc.resumen}</strong></em></p>
-                  <button
-                    style={verMasButtonStyle}
-                    onClick={() => handleVerMas(doc.id)}
-                  >
-                    Ver más
-                  </button>
-                </div>
-              ))
-            ) : (
-              <p style={{ textAlign: 'center' }}>No se encontraron documentos</p>
-            )}
-
-        </main>
+        <div style={buttonGrid}>
+          <button style={buttonStyle}>Botón 1</button>
+          <button style={buttonStyle}>Botón 2</button>
+          <button style={buttonStyle}>Botón 3</button>
+          <button style={buttonStyle}>Botón 4</button>
+        </div>
       </div>
     </div>
   );
 }
 
-export const container: CSSProperties = {
+// Estilos
+const container: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100vh',
+  backgroundColor: '#f0f2f5',
+};
+
+const contentContainer: React.CSSProperties = {
+  display: 'flex',
+  width: '80%',
+  height: '80%',
+  backgroundColor: '#fff',
+  borderRadius: '10px',
+  boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+};
+
+const sidebar: React.CSSProperties = {
+  width: '200px',
+  backgroundColor: '#ddd',
+  padding: '1rem',
   display: 'flex',
   flexDirection: 'column',
-  height: '100vh',
-  width: '100vw',
+  justifyContent: 'space-between',
+};
+
+const buttonGrid: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, 150px)',
+  gap: '1rem',
+  justifyContent: 'center',
+  alignContent: 'center',
+  flex: 1,
+};
+
+const buttonStyle: React.CSSProperties = {
   padding: '1rem',
-  backgroundColor: '#f0f2f5',
-  boxSizing: 'border-box',
-  overflow: 'hidden', // ¡importante!
+  fontSize: '1rem',
+  borderRadius: '8px',
+  border: 'none',
+  backgroundColor: '#4a90e2',
+  color: 'white',
+  cursor: 'pointer',
+  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+};
+
+const logoutButtonStyle: React.CSSProperties = {
+  ...buttonStyle,
+  backgroundColor: '#e74c3c',
 };
