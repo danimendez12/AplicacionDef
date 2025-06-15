@@ -3,6 +3,7 @@ import Login from './Login';
 import RegisterPage from './Register';
 import Pagina_principal from './Pagina_principal'
 import PaginaDocumento from './pagina_documento';
+import RWAWidget from './RWAWidget';
 
 function Home() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ function Home() {
     <div
       style={{
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
@@ -25,6 +27,9 @@ function Home() {
       <button style={buttonStyle} onClick={() => navigate('/register')}>
         Register
       </button>
+      <div style={{ marginTop: '2rem' }}>
+        <RWAWidget />
+      </div>
     </div>
   );
 }
