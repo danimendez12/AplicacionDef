@@ -6,53 +6,93 @@ import house2 from './assets/asset-house2.png';
 
 const assetImages = [house1, house2];
 
-interface TokenizedAsset {
-  name: string;
-  symbol: string;
-  supply: string;
-  contractAddress: string;
-  imageIdx?: number;
-}
-
 const AssetRegistry: React.FC = () => {
-  const [assets, setAssets] = useState<TokenizedAsset[]>(() => {
-    const stored = localStorage.getItem('tokenizedAssets');
+  const [requests, setRequests] = useState<any[]>(() => {
+    const stored = localStorage.getItem('tokenizationRequests');
     return stored ? JSON.parse(stored) : [];
   });
+  const [name, setName] = useState("");
+  const [symbol, setSymbol] = useState("");
+  const [supply, setSupply] = useState("");
+  const [imageIdx, setImageIdx] = useState(0);
+  const [status, setStatus] = useState("");
 
-  // Guardar en localStorage cada vez que cambian los assets
-  React.useEffect(() => {
-    localStorage.setItem('tokenizedAssets', JSON.stringify(assets));
-  }, [assets]);
-
-  // Simula el registro de un nuevo activo tokenizado
-  const handleSimulate = (data: { name: string; symbol: string; supply: string }) => {
-    const contractAddress = prompt(
-      `Simulación: Ingresa la dirección del contrato desplegado para el activo "${data.name}" (${data.symbol})`);
-    if (contractAddress) {
-      // Asignar imagen de forma cíclica
-      const imageIdx = assets.length % assetImages.length;
-      setAssets(prev => [...prev, { ...data, contractAddress, imageIdx }]);
+  const handleRequest = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !symbol || !supply) {
+      setStatus("Todos los campos son obligatorios");
+      return;
     }
+    const req = { name, symbol, supply, imageIdx, date: new Date().toISOString() };
+    setRequests(prev => {
+      const updated = [...prev, req];
+      localStorage.setItem('tokenizationRequests', JSON.stringify(updated));
+      return updated;
+    });
+    setName(""); setSymbol(""); setSupply(""); setImageIdx(0); setStatus("¡Petición enviada!");
   };
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', marginTop: 32 }}>
-      <TokenizationSimulator onSimulate={handleSimulate} />
-      <h3 style={{ marginTop: 32, color: '#458339' }}>Activos Tokenizados</h3>
-      {assets.length === 0 && <div style={{ color: '#888' }}>No hay activos registrados aún.</div>}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-        {assets.map((asset, idx) => (
-          <AssetCard
-            key={idx}
-            name={asset.name}
-            symbol={asset.symbol}
-            supply={asset.supply}
-            contractAddress={asset.contractAddress}
-            image={assetImages[asset.imageIdx ?? 0]}
+    <div style={{ maxWidth: 600, margin: '0 auto', marginTop: 32 }}>
+      <h2 style={{ color: '#458339' }}>Solicitar Tokenización de Activo</h2>
+      <form onSubmit={handleRequest} style={{ background: '#f8fff4', borderRadius: 8, padding: 24, marginBottom: 32 }}>
+        <div style={{ marginBottom: 12 }}>
+          <label>Nombre del Activo</label>
+          <input
+            type="text"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            required
+            style={{ width: '100%', padding: 6, borderRadius: 4, border: '1px solid #ccc' }}
           />
+        </div>
+        <div style={{ marginBottom: 12 }}>
+          <label>Símbolo</label>
+          <input
+            type="text"
+            value={symbol}
+            onChange={e => setSymbol(e.target.value)}
+            required
+            style={{ width: '100%', padding: 6, borderRadius: 4, border: '1px solid #ccc' }}
+          />
+        </div>
+        <div style={{ marginBottom: 12 }}>
+          <label>Cantidad total de tokens</label>
+          <input
+            type="number"
+            value={supply}
+            onChange={e => setSupply(e.target.value)}
+            required
+            min={1}
+            style={{ width: '100%', padding: 6, borderRadius: 4, border: '1px solid #ccc' }}
+          />
+        </div>
+        <div style={{ marginBottom: 12 }}>
+          <label>Imagen</label>
+          <select value={imageIdx} onChange={e => setImageIdx(Number(e.target.value))} style={{ width: '100%', padding: 6, borderRadius: 4 }}>
+            <option value={0}>Casa 1</option>
+            <option value={1}>Casa 2</option>
+          </select>
+        </div>
+        <button type="submit" style={{ background: '#458339', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 20px', cursor: 'pointer' }}>
+          Solicitar Tokenización
+        </button>
+        {status && <div style={{ marginTop: 12, color: status.includes('¡Petición') ? '#458339' : 'red' }}>{status}</div>}
+      </form>
+      <h3 style={{ color: '#458339' }}>Peticiones realizadas</h3>
+      {requests.length === 0 && <div style={{ color: '#888' }}>No hay peticiones aún.</div>}
+      <ul style={{ listStyle: 'none', padding: 0 }}>
+        {requests.map((req, idx) => (
+          <li key={idx} style={{ marginBottom: 12, background: '#f0f2f5', borderRadius: 6, padding: 12, display: 'flex', alignItems: 'center', gap: 16 }}>
+            <img src={assetImages[req.imageIdx]} alt="activo" style={{ width: 60, height: 40, objectFit: 'cover', borderRadius: 4 }} />
+            <div>
+              <div><b>{req.name}</b> ({req.symbol})</div>
+              <div>Total tokens: {req.supply}</div>
+              <div style={{ fontSize: 12, color: '#888' }}>Solicitado: {new Date(req.date).toLocaleString()}</div>
+            </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 };

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import AssetRegistry from "./AssetRegistry";
 import RWAWidget from "./RWAWidget";
+import MarketSelector from './MarketSelector';
 
 const menuItems = [
   { key: "register", label: "Registrar Activo" },
   { key: "consult", label: "Consultar Activos" },
-  { key: "transfer", label: "Transferir Tokens" },
+  { key: "market", label: "Comprar/Vender Tokens" },
 ];
 
 const MainMenu: React.FC = () => {
@@ -40,11 +41,7 @@ const MainMenu: React.FC = () => {
       <main style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
         {selected === "register" && <AssetRegistry />}
         {selected === "consult" && <RWAWidget />}
-        {selected === "transfer" && (
-          <div style={{ color: '#666', fontSize: 18, marginTop: 40 }}>
-            (Funcionalidad de transferencia próximamente)
-          </div>
-        )}
+        {selected === "market" && <MarketSelector />}
       </main>
     </div>
   );
