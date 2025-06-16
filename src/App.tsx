@@ -3,7 +3,8 @@ import Login from './Login';
 import RegisterPage from './Register';
 import Pagina_principal from './Pagina_principal'
 import PaginaDocumento from './pagina_documento';
-import RWAWidget from './RWAWidget';
+import AssetRegistry from './AssetRegistry';
+import MainMenu from './MainMenu';
 
 function Home() {
   const navigate = useNavigate();
@@ -21,15 +22,21 @@ function Home() {
         gap: '1rem',
       }}
     >
-      <button style={buttonStyle} onClick={() => navigate('/login')}>
+      {/* <button style={buttonStyle} onClick={() => navigate('/login')}>
         Login
       </button>
       <button style={buttonStyle} onClick={() => navigate('/register')}>
         Register
-      </button>
+      </button> */}
+      <div style={{ marginTop: '2rem' }}>
+        <AssetRegistry />
+      </div>
+      {/* <div style={{ marginTop: '2rem' }}>
+        <TokenizationSimulator />
+      </div>
       <div style={{ marginTop: '2rem' }}>
         <RWAWidget />
-      </div>
+      </div> */}
     </div>
   );
 }
@@ -37,17 +44,7 @@ function Home() {
 
 
 export default function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<RegisterPage />} />
-          <Route path="/pagina_principal" element={<Pagina_principal />} />
-        <Route path="/pagina_documento/:id" element={<PaginaDocumento />} />
-      </Routes>
-    </BrowserRouter>
-  );
+  return <MainMenu />;
 }
 
 const buttonStyle = {

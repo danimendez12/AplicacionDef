@@ -8,8 +8,12 @@ declare global {
   }
 }
 
-const RWAWidget: React.FC = () => {
-  const [contractAddress, setContractAddress] = useState<string>("");
+interface RWAWidgetProps {
+  initialAddress?: string;
+}
+
+const RWAWidget: React.FC<RWAWidgetProps> = ({ initialAddress }) => {
+  const [contractAddress, setContractAddress] = useState<string>(initialAddress || "");
 
   return (
     <div style={{ border: "1px solid #ccc", padding: 24, borderRadius: 8, maxWidth: 400 }}>
