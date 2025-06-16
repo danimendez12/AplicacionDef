@@ -15,7 +15,15 @@ interface TokenizedAsset {
 }
 
 const AssetRegistry: React.FC = () => {
-  const [assets, setAssets] = useState<TokenizedAsset[]>([]);
+  const [assets, setAssets] = useState<TokenizedAsset[]>(() => {
+    const stored = localStorage.getItem('tokenizedAssets');
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  // Guardar en localStorage cada vez que cambian los assets
+  React.useEffect(() => {
+    localStorage.setItem('tokenizedAssets', JSON.stringify(assets));
+  }, [assets]);
 
   // Simula el registro de un nuevo activo tokenizado
   const handleSimulate = (data: { name: string; symbol: string; supply: string }) => {
